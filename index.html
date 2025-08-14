@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Portfolio Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+        }
+        .nav-button:not(.active):hover {
+            background: #f3f4f6;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Investment Portfolio Dashboard</h1>
+            <p class="text-gray-600">Real-time overview of your $348,322 investment portfolio</p>
+            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Data Sources</h3>
+                        <p class="text-sm text-yellow-700 mt-1">
+                            Performance data is based on your actual Vanguard account statements. 12-month returns marked with (*) are estimates and should be verified.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex space-x-4 mb-6 flex-wrap">
+            <button onclick="showView('overview')" class="nav-button active px-6 py-3 rounded-lg font-medium mb-2" id="nav-overview">Overview</button>
+            <button onclick="showView('holdings')" class="nav-button px-6 py-3 rounded-lg font-medium bg-white text-gray-600 shadow-md mb-2" id="nav-holdings">Holdings</button>
+            <button onclick="showView('performance')" class="nav-button px-6 py-3 rounded-lg font-medium bg-white text-gray-600 shadow-md mb-2" id="nav-performance">Performance</button>
+            <button onclick="showView('allocation')" class="nav-button px-6 py-3 rounded-lg font-medium bg-white text-gray-600 shadow-md mb-2" id="nav-allocation">Allocation</button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview-section">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+                <div class="stat-card bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">Total Portfolio Value</p>
+                            <p class="text-2xl font-bold text-gray-900">$348,322</p>
+                            <p class="text-sm flex items-center mt-1 text-green-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                +10.9%
+                            </p>
+                        </div>
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">Total Holdings</p>
+                            <p class="text-2xl font-bold text-gray-900">16</p>
+                        </div>
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">Rate of Return</p>
+                            <p class="text-2xl font-bold text-gray-900">10.9%</p>
+                            <p class="text-sm flex items-center mt-1 text-green-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                +10.9%
+                            </p>
+                        </div>
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">Best Performer</p>
+                            <p class="text-2xl font-bold text-gray-900">AXON +221.6%</p>
+                            <p class="text-sm flex items-center mt-1 text-green-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                +221.6%
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">12M: +161.7%*</p>
+                        </div>
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">Worst Performer</p>
+                            <p class="text-2xl font-bold text-gray-900">OKTA -13.1%</p>
+                            <p class="text-sm flex items-center mt-1 text-red-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                -13.1%
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">12M: -1.9%</p>
+                        </div>
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Asset Allocation</h3>
+                    <div class="chart-container">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Monthly Investment Returns (2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Holdings Table -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-6">Top Holdings</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-left font-medium text-gray-900">Symbol</th>
+                                <th class="px-6 py-3 text-left font-medium text-gray-900">Name</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Market Value</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Gain/Loss %</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Portfolio %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="holdings-table">
+                            <!-- Table will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Holdings Section -->
+        <div id="holdings-section" style="display: none;">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-6">All Holdings with Performance</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-left font-medium text-gray-900">Symbol</th>
+                                <th class="px-6 py-3 text-left font-medium text-gray-900">Name</th>
+                                <th class="px-6 py-3 text-left font-medium text-gray-900">Type</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Market Value</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Personal Gain/Loss %</th>
+                                <th class="px-6 py-3 text-right font-medium text-gray-900">Portfolio %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailed-holdings-table">
+                            <!-- Table will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Section -->
+        <div id="performance-section" style="display: none;">
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-medium text-amber-800">Actual Performance Data</h3>
+                        <p class="text-amber-700 mt-1">
+                            The data below reflects your actual monthly investment returns from your Vanguard account statements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold mb-6">Monthly Investment Returns</h3>
+                <div class="chart-container">
+                    <canvas id="performanceDetailChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-6">Key Performance Metrics</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6">
+                        <h4 class="font-medium text-blue-900 mb-2">Total Investment Returns</h4>
+                        <p class="text-3xl font-bold text-blue-600">$72,223</p>
+                        <p class="text-sm text-blue-500 mt-1">Since inception</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-6">
+                        <h4 class="font-medium text-green-900 mb-2">Rate of Return</h4>
+                        <p class="text-3xl font-bold text-green-600">10.9%</p>
+                        <p class="text-sm text-green-500 mt-1">As of June 30, 2025</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6">
+                        <h4 class="font-medium text-purple-900 mb-2">Total Contributions</h4>
+                        <p class="text-3xl font-bold text-purple-600">$266,226</p>
+                        <p class="text-sm text-purple-500 mt-1">Deposits & withdrawals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Allocation Section -->
+        <div id="allocation-section" style="display: none;">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold mb-6">Asset Allocation Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="allocationBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Risk Metrics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Equity Exposure</span>
+                            <span class="font-semibold text-lg">96.9%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Cash/Equivalents</span>
+                            <span class="font-semibold text-lg">3.1%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">International Exposure</span>
+                            <span class="font-semibold text-lg">23.4%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Technology Sector</span>
+                            <span class="font-semibold text-lg">~18%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Concentration Analysis</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Top 5 Holdings</span>
+                            <span class="font-semibold text-lg">79.7%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Top 10 Holdings</span>
+                            <span class="font-semibold text-lg">92.5%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Largest Position</span>
+                            <span class="font-semibold text-lg">VT (23.4%)</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Number of Positions</span>
+                            <span class="font-semibold text-lg">16</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Script starting...');
+        
+        // Check if Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js is not loaded!');
+            document.body.innerHTML += '<div style="color: red; text-align: center; padding: 20px; font-size: 18px;">Chart.js failed to load. Please check your internet connection.</div>';
+        } else {
+            console.log('Chart.js loaded successfully');
+        }
+
+        // Portfolio data
+        const portfolioData = {
+            topHoldings: [
+                { symbol: 'VT', name: 'Vanguard Total World Stock ETF', value: 81625.00, percentage: 23.4, type: 'ETF', percentGainLoss: 13.7 },
+                { symbol: 'VOO', name: 'Vanguard S&P 500 ETF', value: 75149.00, percentage: 21.6, type: 'ETF', percentGainLoss: 27.7 },
+                { symbol: 'VTI', name: 'Vanguard Total Stock Market ETF', value: 62627.11, percentage: 18.0, type: 'ETF', percentGainLoss: 35.3 },
+                { symbol: 'VUG', name: 'Vanguard Growth ETF', value: 28084.35, percentage: 8.1, type: 'ETF', percentGainLoss: 69.5 },
+                { symbol: 'VGT', name: 'Vanguard Information Technology ETF', value: 25371.27, percentage: 7.3, type: 'ETF', percentGainLoss: 76.4 },
+                { symbol: 'QQQ', name: 'Invesco QQQ ETF', value: 13087.25, percentage: 3.8, type: 'ETF', percentGainLoss: 72.1 },
+                { symbol: 'AXON', name: 'Axon Enterprise Inc', value: 13013.84, percentage: 3.7, type: 'Stock', percentGainLoss: 221.6 },
+                { symbol: 'CRWD', name: 'CrowdStrike Holdings Inc', value: 9506.64, percentage: 2.7, type: 'Stock', percentGainLoss: 83.5 },
+                { symbol: 'AAPL', name: 'Apple Inc', value: 5635.15, percentage: 1.6, type: 'Stock', percentGainLoss: 34.2 },
+                { symbol: 'AMZN', name: 'Amazon.com Inc', value: 5614.00, percentage: 1.6, type: 'Stock', percentGainLoss: 37.1 },
+                { symbol: 'BRK.B', name: 'Berkshire Hathaway Inc Class B', value: 5250.41, percentage: 1.5, type: 'Stock', percentGainLoss: 16.7 },
+                { symbol: 'DIS', name: 'Walt Disney Co', value: 5090.75, percentage: 1.5, type: 'Stock', percentGainLoss: -11.6 },
+                { symbol: 'KO', name: 'Coca-Cola Company', value: 4302.85, percentage: 1.2, type: 'Stock', percentGainLoss: 13.2 },
+                { symbol: 'OKTA', name: 'Okta Inc Class A', value: 3912.14, percentage: 1.1, type: 'Stock', percentGainLoss: -13.1 },
+                { symbol: 'CASH', name: 'Cash & Cash Equivalents', value: 10052.00, percentage: 2.9, type: 'Cash', percentGainLoss: 0 }
+            ],
+            assetAllocation: [
+                { name: 'Vanguard ETFs', value: 277256.73, percentage: 79.6, color: '#3b82f6' },
+                { name: 'Individual Stocks', value: 47307.78, percentage: 13.6, color: '#10b981' },
+                { name: 'Other ETFs', value: 13087.25, percentage: 3.8, color: '#f59e0b' },
+                { name: 'Cash/Money Market', value: 10670.00, percentage: 3.1, color: '#6b7280' }
+            ],
+            performanceData: [
+                { month: 'Jan', portfolio: 7043 },
+                { month: 'Feb', portfolio: -7364 },
+                { month: 'Mar', portfolio: -16230 },
+                { month: 'Apr', portfolio: 3499 },
+                { month: 'May', portfolio: 19686 },
+                { month: 'Jun', portfolio: 15749 },
+                { month: 'Jul', portfolio: 326 }
+            ]
+        };
+
+        // Utility functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        // Navigation function
+        function showView(viewName) {
+            console.log('Showing view:', viewName);
+            
+            // Hide all sections
+            const sections = ['overview', 'holdings', 'performance', 'allocation'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+                const navButton = document.getElementById('nav-' + section);
+                if (navButton) {
+                    navButton.classList.remove('active');
+                    navButton.classList.add('bg-white', 'text-gray-600', 'shadow-md');
+                }
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(viewName + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            const activeButton = document.getElementById('nav-' + viewName);
+            if (activeButton) {
+                activeButton.classList.add('active');
+                activeButton.classList.remove('bg-white', 'text-gray-600', 'shadow-md');
+            }
+
+            // Initialize content for the selected view
+            if (viewName === 'overview') {
+                setTimeout(initializeOverviewCharts, 100);
+            } else if (viewName === 'holdings') {
+                populateDetailedHoldingsTable();
+            } else if (viewName === 'performance') {
+                setTimeout(initializePerformanceChart, 100);
+            } else if (viewName === 'allocation') {
+                setTimeout(initializeAllocationChart, 100);
+            }
+        }
+
+        // Initialize charts
+        function initializeOverviewCharts() {
+            console.log('Initializing overview charts...');
+            
+            try {
+                // Asset Allocation Pie Chart
+                const allocationCanvas = document.getElementById('allocationChart');
+                if (allocationCanvas) {
+                    const ctx = allocationCanvas.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: portfolioData.assetAllocation.map(item => item.name),
+                            datasets: [{
+                                data: portfolioData.assetAllocation.map(item => item.value),
+                                backgroundColor: portfolioData.assetAllocation.map(item => item.color),
+                                borderWidth: 2,
+                                borderColor: '#ffffff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true
+                                    }
+                
